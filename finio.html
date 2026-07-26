@@ -83,6 +83,60 @@ img { max-width: 100%; display: block; border-radius: 18px; }
 .theme-toggle:hover { border-color: var(--accent); transform: translateY(-2px); }
 .theme-toggle .dot { width: .8rem; height: .8rem; border-radius: 50%; background: var(--accent); transition: background .5s; }
 
+/* Mobile menu */
+.nav-menu { display: flex; align-items: center; gap: .4rem; }
+.menu-toggle {
+  display: none;
+  width: 2.65rem; height: 2.65rem;
+  border: 1.5px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface-raised);
+  color: var(--ink);
+  place-items: center;
+  cursor: pointer;
+  transition: border-color .3s, transform .25s var(--ease-bounce);
+}
+.menu-toggle:hover { border-color: var(--accent); transform: translateY(-2px); }
+.menu-toggle span {
+  display: block;
+  width: 1.05rem; height: 1.5px;
+  background: currentColor;
+  border-radius: 999px;
+  transition: transform .25s var(--ease-out), opacity .25s var(--ease-out);
+}
+.nav.is-open .menu-toggle span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+.nav.is-open .menu-toggle span:nth-child(2) { opacity: 0; }
+.nav.is-open .menu-toggle span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+@media (max-width: 900px) {
+  .site-header .container { position: relative; }
+  .menu-toggle { display: grid; }
+  .nav { gap: .5rem; }
+  .nav-menu {
+    position: absolute;
+    top: calc(100% + .7rem);
+    right: clamp(1.25rem, 4vw, 3rem);
+    width: min(260px, calc(100vw - 2.5rem));
+    display: none;
+    flex-direction: column;
+    align-items: stretch;
+    gap: .35rem;
+    padding: .75rem;
+    border: 1.5px solid var(--line);
+    border-radius: 22px;
+    background: color-mix(in srgb, var(--surface-raised) 94%, transparent);
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(18px);
+  }
+  .nav.is-open .nav-menu { display: flex; }
+  .nav-menu a, .nav-menu .theme-toggle {
+    display: flex !important;
+    justify-content: flex-start;
+    width: 100%;
+    min-height: 44px;
+  }
+}
+
+
 /* Back link */
 .backlink { display: inline-flex; align-items: center; gap: .5rem; font-family: var(--font-mono); font-size: .78rem; color: var(--ink-secondary); text-decoration: none; margin-bottom: var(--space, 2rem); transition: color .3s, transform .3s var(--ease-bounce); }
 .backlink:hover { color: var(--accent); transform: translateX(-4px); }
@@ -172,8 +226,7 @@ img { max-width: 100%; display: block; border-radius: 18px; }
 /* Reveal */
 .gs-reveal { opacity: 0; transform: translateY(28px); }
 
-@media (max-width: 760px) {
-  .nav a:not(.theme-toggle):not(.nav-key) { display: none; }
+@media (max-width: 900px) {
   .site-header .container { padding-left: 1.25rem; padding-right: 1.25rem; }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -200,7 +253,7 @@ img { max-width: 100%; display: block; border-radius: 18px; }
     .diagram-cap { font-family: var(--font-mono); font-size: .72rem; color: var(--ink-tertiary); margin: .7rem 0 0; }
     .privacy-note { font-size: .78rem; color: var(--ink-tertiary); font-style: italic; margin: 1.1rem 0 .2rem; padding-left: .9rem; border-left: 2px solid var(--line-strong); }
     .ba-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin: 1.5rem 0; align-items: start; }
-    @media (max-width: 760px) { .ba-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 900px) { .ba-grid { grid-template-columns: 1fr; } }
     .ba-item { margin: 0; }
     .ba-label { display: flex; align-items: center; gap: .6rem; font-family: var(--font-display); font-weight: 640; font-size: 1rem; margin-bottom: .75rem; }
     .ba-chip { font-family: var(--font-mono); font-size: .62rem; letter-spacing: .07em; text-transform: uppercase; padding: .3rem .62rem; border-radius: 999px; }
@@ -295,11 +348,14 @@ img { max-width: 100%; display: block; border-radius: 18px; }
     <div class="container">
       <a class="wordmark" href="index.html">Anntser<span>.</span></a>
       <nav class="nav" aria-label="Main">
-        <a href="index.html#work">Work</a>
+        <button class="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
+        <div class="nav-menu">
+          <a href="index.html#work">Work</a>
         <a href="about.html">About</a>
         <a href="assets/ana-tsertsvadze-resume.pdf">Resume</a>
         <a href="contact.html" class="nav-key">Contact</a>
         <button class="theme-toggle" type="button" aria-label="Toggle theme"><span class="dot" aria-hidden="true"></span><span class="label">night</span></button>
+        </div>
       </nav>
     </div>
   </header>
@@ -692,6 +748,31 @@ img { max-width: 100%; display: block; border-radius: 18px; }
   var io=new IntersectionObserver(function(es){es.forEach(function(e){ if(e.isIntersecting&&!started){started=true; run(); } });},{threshold:.35});
   io.observe(root);
 })();
+
+/* Mobile menu behavior */
+document.addEventListener('click', (e) => {
+  const toggle = e.target.closest('.menu-toggle');
+  document.querySelectorAll('.nav.is-open').forEach(nav => {
+    if (!toggle || !nav.contains(toggle)) {
+      nav.classList.remove('is-open');
+      const btn = nav.querySelector('.menu-toggle');
+      if (btn) btn.setAttribute('aria-expanded', 'false');
+    }
+  });
+  if (!toggle) return;
+  const nav = toggle.closest('.nav');
+  const isOpen = nav.classList.toggle('is-open');
+  toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key !== 'Escape') return;
+  document.querySelectorAll('.nav.is-open').forEach(nav => {
+    nav.classList.remove('is-open');
+    const btn = nav.querySelector('.menu-toggle');
+    if (btn) btn.setAttribute('aria-expanded', 'false');
+  });
+});
+
 </script>
 <script>
 (function initReportPrototype(){
