@@ -97,16 +97,13 @@ img { max-width: 100%; display: block; border-radius: 18px; }
   transition: border-color .3s, transform .25s var(--ease-bounce);
 }
 .menu-toggle:hover { border-color: var(--accent); transform: translateY(-2px); }
-.menu-toggle span {
-  display: block;
-  width: 1.05rem; height: 1.5px;
-  background: currentColor;
-  border-radius: 999px;
-  transition: transform .25s var(--ease-out), opacity .25s var(--ease-out);
+.menu-toggle svg {
+  width: 1.35rem; height: 1.35rem; display: block;
+  transition: transform .25s var(--ease-out), opacity .2s var(--ease-out);
 }
-.nav.is-open .menu-toggle span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
-.nav.is-open .menu-toggle span:nth-child(2) { opacity: 0; }
-.nav.is-open .menu-toggle span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+.menu-toggle .icon-close { display: none; }
+.nav.is-open .menu-toggle .icon-menu { display: none; }
+.nav.is-open .menu-toggle .icon-close { display: block; }
 @media (max-width: 900px) {
   .site-header .container { position: relative; }
   .menu-toggle { display: grid; }
@@ -175,6 +172,12 @@ img { max-width: 100%; display: block; border-radius: 18px; }
 .section { padding: clamp(2.5rem, 5vw, 4rem) 0; }
 .prose { font-size: 1.1rem; }
 .prose > * { max-width: none; }
+
+/* Readable measure: constrain text, leave visuals full width */
+.prose > p:not(.diagram-cap):not(.figure-cap),
+.prose > h2, .prose > h3, .prose > h4,
+.prose > ul, .prose > ol, .prose > blockquote { max-width: 70ch; }
+
 .prose h2 { font-weight: 750; font-size: clamp(1.5rem, 3vw, 2.3rem); letter-spacing: -.02em; margin: clamp(2.5rem,5vw,3.5rem) 0 1rem; max-width: none; }
 .prose h2:first-child { margin-top: 0; }
 .prose h3 { font-weight: 650; font-size: 1.2rem; margin: 2rem 0 .6rem; }
@@ -348,7 +351,7 @@ img { max-width: 100%; display: block; border-radius: 18px; }
     <div class="container">
       <a class="wordmark" href="index.html">Anntser<span>.</span></a>
       <nav class="nav" aria-label="Main">
-        <button class="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
+        <button class="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false"><svg class="icon-menu" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6l16 0"/><path d="M4 12l16 0"/><path d="M4 18l16 0"/></svg><svg class="icon-close" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6l-12 12"/><path d="M6 6l12 12"/></svg></button>
         <div class="nav-menu">
           <a href="index.html#work">Work</a>
         <a href="about.html">About</a>

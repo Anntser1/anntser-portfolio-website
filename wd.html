@@ -98,16 +98,13 @@ img { max-width: 100%; display: block; border-radius: 18px; }
   transition: border-color .3s, transform .25s var(--ease-bounce);
 }
 .menu-toggle:hover { border-color: var(--accent); transform: translateY(-2px); }
-.menu-toggle span {
-  display: block;
-  width: 1.05rem; height: 1.5px;
-  background: currentColor;
-  border-radius: 999px;
-  transition: transform .25s var(--ease-out), opacity .25s var(--ease-out);
+.menu-toggle svg {
+  width: 1.35rem; height: 1.35rem; display: block;
+  transition: transform .25s var(--ease-out), opacity .2s var(--ease-out);
 }
-.nav.is-open .menu-toggle span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
-.nav.is-open .menu-toggle span:nth-child(2) { opacity: 0; }
-.nav.is-open .menu-toggle span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+.menu-toggle .icon-close { display: none; }
+.nav.is-open .menu-toggle .icon-menu { display: none; }
+.nav.is-open .menu-toggle .icon-close { display: block; }
 @media (max-width: 900px) {
   .site-header .container { position: relative; }
   .menu-toggle { display: grid; }
@@ -239,6 +236,7 @@ img { max-width: 100%; display: block; border-radius: 18px; }
 </style>
   <style>
     .gate { min-height: 60vh; display: grid; place-items: center; text-align: center; padding: 4rem 0; }
+    .gate[hidden] { display: none; }
     .gate .lock { font-size: 2.6rem; }
     .gate h1 { font-weight: 760; font-size: clamp(2rem,4vw,3rem); letter-spacing: -.025em; margin: 1rem 0; }
     .gate p { color: var(--ink-secondary); max-width: 48ch; margin: 0 auto 1.6rem; }
@@ -259,6 +257,9 @@ img { max-width: 100%; display: block; border-radius: 18px; }
     .wd-logo-main { width: min(360px, 68vw); margin: 0 auto 1.4rem; color: var(--ink); }
     [data-theme="night"] .wd-logo-main { color: #fff; }
     .wd-logo-main svg { width: 100%; height: auto; overflow: visible; }
+    #wd-content .prose > .figure, #wd-content .prose > .figure-cap { max-width: none; }
+    #wd-content .prose > .figure { margin: 1.8rem 0 0; }
+    #wd-content .prose > .figure-cap { margin-bottom: 2rem; }
     .figure--wd-logo { background: var(--surface-raised); color: var(--ink); padding: clamp(2rem, 5vw, 4rem); }
     [data-theme="night"] .figure--wd-logo { color: #fff; }
     .figure--wd-logo svg { width: min(420px, 82%); height: auto; overflow: visible; }
@@ -273,7 +274,7 @@ img { max-width: 100%; display: block; border-radius: 18px; }
     <div class="container">
       <a class="wordmark" href="index.html">Anntser<span>.</span></a>
       <nav class="nav" aria-label="Main">
-        <button class="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
+        <button class="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false"><svg class="icon-menu" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6l16 0"/><path d="M4 12l16 0"/><path d="M4 18l16 0"/></svg><svg class="icon-close" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6l-12 12"/><path d="M6 6l12 12"/></svg></button>
         <div class="nav-menu">
           <a href="index.html#work">Work</a>
         <a href="about.html">About</a>
@@ -323,9 +324,25 @@ img { max-width: 100%; display: block; border-radius: 18px; }
       </div>
     </section>
 
-    <article id="wd-content" class="section" hidden><div class="container prose">
-      <h2>Wealth Discovery - coming soon</h2>
-      <p>This case study is being written. The structure is ready for: overview, problem, research, design decisions, and impact.</p>
+  <article id="wd-content" hidden>
+    <section class="case-hero">
+      <div class="container">
+        <a class="backlink" href="index.html#work">← All work</a>
+        <div class="chips">
+          <span class="chip">Case study 04</span><span class="chip">Live product</span><span class="chip chip--plain">Etops · WealthTech</span>
+        </div>
+        <h1>Redesigning a wealth platform that was already live</h1>
+        <p class="standfirst">Wealth Discovery was in production before I joined it. My work is improving the parts that stopped holding up and designing new ones as the product grows — inside an existing codebase, an existing user base, and a shared design system.</p>
+        <dl class="case-meta">
+          <div><dt>Role</dt><dd>Product Designer — UX &amp; UI, ongoing</dd></div>
+          <div><dt>Company</dt><dd>Etops</dd></div>
+          <div><dt>Team</dt><dd>Design team of 4 · PM · developers</dd></div>
+          <div><dt>Users</dt><dd>Wealth managers, advisors, asset managers</dd></div>
+        </dl>
+      </div>
+    </section>
+
+    <div class="container hero-figure">
       <div class="figure figure--wd-logo"><svg class="wd-logo-svg" role="img" aria-label="Wealth Discovery" width="182" height="57" viewBox="0 0 182 57" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g clip-path="url(#clip0_3_74)">
 <path d="M80.0048 30.9184H59.3726C59.5296 33.4669 60.4008 35.4575 61.9872 36.889C63.5729 38.3212 65.4962 39.0362 67.7578 39.0362C69.61 39.0362 71.1565 38.6042 72.3976 37.7383C73.638 36.8737 74.5092 35.7169 75.0115 34.2694H79.6282C78.9368 36.7556 77.5556 38.777 75.483 40.3343C73.4104 41.8923 70.8349 42.6709 67.7578 42.6709C65.3079 42.6709 63.118 42.1208 61.1865 41.0185C59.2555 39.9177 57.7396 38.352 56.641 36.3229C55.5416 34.293 54.9926 31.9418 54.9926 29.2668C54.9926 26.5918 55.5255 24.2482 56.5935 22.2345C57.6609 20.2208 59.1607 18.6711 61.0923 17.5856C63.0233 16.4994 65.2451 15.957 67.7578 15.957C70.2072 15.957 72.3739 16.4924 74.2581 17.5619C76.1422 18.632 77.5946 20.1033 78.6153 21.9744C79.6352 23.8469 80.1465 25.9627 80.1465 28.3225C80.1465 29.141 80.0989 30.0063 80.0048 30.9184ZM74.6347 23.2019C73.9119 22.0221 72.9311 21.1253 71.6909 20.5116C70.4498 19.8979 69.0762 19.591 67.5694 19.591C65.4019 19.591 63.5568 20.2837 62.034 21.6676C60.5104 23.053 59.6391 24.9716 59.42 27.4258H75.718C75.718 25.7902 75.3567 24.3817 74.6347 23.2019Z" fill="currentColor" stroke="currentColor" stroke-width="0.25" stroke-miterlimit="10"/>
@@ -342,7 +359,162 @@ img { max-width: 100%; display: block; border-radius: 18px; }
 </defs>
 </svg>
 </div>
-    </div></article>
+    </div>
+
+    <section class="section"><div class="container prose">
+
+      <h2 class="gs-reveal">Overview</h2>
+      <p class="gs-reveal">Wealth Discovery is an advisory and portfolio-analytics platform built at Etops. Wealth managers, advisors, and asset managers use it to review portfolios, understand how wealth is distributed, and prepare for conversations with their clients.</p>
+      <p class="gs-reveal">I joined after the product was live. The foundations, the core flows, and most of the interface were already there, built by the people before me. My work is redesigning the parts that no longer hold up and designing new features as the product grows.</p>
+
+      <h2 class="gs-reveal">Working inside a product I didn't start</h2>
+      <p class="gs-reveal">This is a different problem from opening a blank file, and in some ways a harder one. Every screen already has users, established behaviour, and a reason it was built that way. Changing something means understanding the original decision first, then making a case for a better one to a PM, to developers who have to build it, and against a roadmap that is already full.</p>
+      <p class="gs-reveal">I also work in a design team of four maintaining a shared design system across more than fourteen Etops products. Anything I change in Wealth Discovery has to hold up inside that system too, so the question is never only whether a solution works on this screen.</p>
+      <p class="gs-reveal">What follows is one piece of that work in detail.</p>
+
+      <h2 class="gs-reveal">Regional allocation</h2>
+      <p class="gs-reveal"><strong>Portfolio Overview · June 2026</strong></p>
+
+      <h3 class="gs-reveal">A map that showed regions and hid countries</h3>
+      <p class="gs-reveal">The original Regional Allocation widget placed large percentage bubbles over broad geographic areas of a world map. A wealth manager could see that a significant share of a portfolio sat somewhere in Europe, but not which countries made up that number.</p>
+      <p class="gs-reveal">The widget communicated regional concentration and hid everything underneath it. My PM asked me to make country-level allocation easier to read without adding levels of drill-down. I owned the UX and UI of the redesign.</p>
+
+      <div class="figure gs-reveal">Before → after: original bubble map beside the redesigned country map</div>
+      <p class="figure-cap gs-reveal">The original view answered at the level of a continent. The redesign moves the same question down to the level a wealth manager actually works at.</p>
+
+      <h3 class="gs-reveal">The obvious fix, and why I passed on it</h3>
+      <p class="gs-reveal">The first direction I considered was keeping the bubbles and making them interactive. Click Europe, reveal the European countries inside it.</p>
+      <p class="gs-reveal">I decided against it. That approach delivers detail after a click, but the default state stays abstract. A user still has to interact with the map just to find out where their portfolio actually is. The weakness was never the lack of interaction. It was what the widget said before anyone touched it.</p>
+      <p class="gs-reveal">So rather than layering interaction on top, I reconsidered what the default view should show.</p>
+
+      <h3 class="gs-reveal">Two elements, two jobs</h3>
+      <p class="gs-reveal">I replaced the percentage bubbles with a real geographic representation. Countries holding allocation render in the stronger brand purple. Countries without it stay quiet. A table sits permanently beside the map with country names, flags, and exact percentages.</p>
+      <p class="gs-reveal">The split is deliberate. The map answers where the portfolio is allocated. The table answers how much. Neither element tries to do both, which is what let me drop the bubbles without losing the precise numbers they carried.</p>
+
+      <div class="figure figure--tall gs-reveal">Redesigned default world view with the allocation table alongside</div>
+      <p class="figure-cap gs-reveal">Nothing here required a click. The countries and their figures are readable on arrival, which was the point of the change.</p>
+
+      <h3 class="gs-reveal">Zoom as optional context</h3>
+      <p class="gs-reveal">Users can look closer when they want to. Selecting a region zooms smoothly into it, for example from the world into Europe.</p>
+      <p class="gs-reveal">In the zoomed state, the surrounding continent renders in the lighter brand purple to hold geographic context while allocated countries stay darker. Hovering a country brings up a tooltip with its flag and allocation. The table stays in place on the left, and a visible reset returns to the global view.</p>
+      <p class="gs-reveal">I kept this shallow on purpose. This is a Portfolio Overview widget, not a mapping application, so there is one optional step down and no deeper path to get lost in.</p>
+
+      <div class="figure gs-reveal">World → Europe zoom transition</div>
+      <p class="figure-cap gs-reveal">The zoom is a continuous movement rather than a page change, so the user never loses their place on the map.</p>
+
+      <div class="figure figure--tall gs-reveal">Zoomed Europe with tooltip and persistent allocation table</div>
+      <p class="figure-cap gs-reveal">Context and detail coexist. The lighter continent keeps the country readable as part of a region instead of isolating it.</p>
+
+      <h3 class="gs-reveal">From prototype to build</h3>
+      <p class="gs-reveal">The design depended on movement and state changes, so static screens were not going to survive handoff. I built an interactive prototype covering the zoom, the map states, hover behaviour, the colour hierarchy, and reset.</p>
+      <p class="gs-reveal">I presented the direction to the wider team and we agreed to move forward with it. I then walked developers through the prototype, reviewed the built version, and wrote follow-up requirements where the behaviour needed correcting. The widget shipped in June 2026 and was well received internally.</p>
+
+      <h2 class="gs-reveal">AI Search for compliance</h2>
+      <p class="gs-reveal"><strong>Compliance workspace · Live</strong></p>
+
+      <h3 class="gs-reveal">A shortcut for the question officers ask every day</h3>
+      <p class="gs-reveal">The compliance workspace is where a small team monitors thousands of clients for regulatory risk: anti-money-laundering exposure, KYC gaps, sanctions checks, activity anomalies. The job is a version of the same question asked repeatedly. Who needs a closer look today?</p>
+      <p class="gs-reveal">Filters already answered these questions well. To find active clients in Germany with a High AML risk, an officer opened the filter panel, chose Status, selected Active, added Domicile, selected Germany, added AML Risk, selected High, applied. It works, and for anything genuinely complex it is still the better tool. But for the quick, repeated client lookups that fill an officer's day, it meant rebuilding the same chain tomorrow with different values and again next week for a variant.</p>
+      <p class="gs-reveal">The brief was one line: let them ask the question directly.</p>
+      <p class="gs-reveal">Worth being precise about the scope, because it shaped what I built. AI Search covers client search. It is an additional, faster route to a result, not a replacement for filtering. Filters remain the tool for complex structured queries and for everything beyond clients, including portfolios and mandates, and they can express conditions the natural-language layer cannot reach. The goal was a shortcut for the common case, sitting alongside the existing system rather than on top of it.</p>
+      <p class="gs-reveal">That sounds simple, and it isn't. In compliance a wrong answer is not an inconvenience, it is a reason for an audit finding. If the system quietly misread a query and returned the wrong client list, the officer would find out when a regulator told them. That risk shaped nearly every decision here.</p>
+
+      <div class="figure gs-reveal">The filter panel, and the same question asked in one line</div>
+      <p class="figure-cap gs-reveal">Two routes to the same list. The point was to make the short one available, not to retire the long one.</p>
+
+      <h3 class="gs-reveal">Two groups pulling in opposite directions</h3>
+      <p class="gs-reveal">Full-time officers already knew the filter schema and wanted speed. To them natural language could easily read as a downgrade, and every confirmation step is a tax on someone who could have built the filter faster by hand. They also had the option to ignore the feature entirely, which meant it had to earn its use rather than assume it.</p>
+      <p class="gs-reveal">Occasional users, the auditors and reviewers spot-checking a report, did not know the schema. They needed to see that the results matched the question they asked.</p>
+      <p class="gs-reveal">Designing for either group alone loses the other. The feature had to be quick enough for daily use and legible enough for someone opening it once a quarter.</p>
+
+      <h3 class="gs-reveal">Six decisions</h3>
+      <p class="gs-reveal"><strong>Show the interpretation as chips, not a sentence.</strong> Most tools paraphrase the query back: "Showing active clients domiciled in Germany with High AML risk." It reads well and it hides the thing that matters, because the user cannot tell whether High mapped to AML risk or credit risk. I showed the interpretation as one chip per criterion instead, structured and plain, so it can be checked at a glance and corrected piece by piece rather than retyped.</p>
+      <p class="gs-reveal"><strong>Surface what the system could not do.</strong> Some parts of a natural query have no structured field behind them. "Clients who haven't completed KYC verification" is one. The most dangerous available behaviour is to drop that silently and return results anyway, because the officer believes they have a complete answer. So the drawer names the gap directly: that phrase is not a structured field, so it was not used to filter these results. The user knows what the list covers and what it doesn't.</p>
+      <p class="gs-reveal"><strong>Label every value.</strong> Compliance data is dense with badges, IDs, dates, and statuses. A red High chip means nothing without AML risk beside it. The rule for this feature is that no value appears without its label, which removes the need for institutional memory and keeps the drawer readable for the quarterly reviewer.</p>
+      <p class="gs-reveal"><strong>Two densities on the result card.</strong> Officers scan long lists and act on single clients. The collapsed card carries identity essentials only: name, ID, risk badge. Expanding it brings type, domicile, advisor, contact, and dates. Scannable while moving, detailed when stopping.</p>
+      <p class="gs-reveal"><strong>One consolidated follow-up.</strong> After results appear, officers usually export, open the full table, or refine. Rather than stacking those as competing prompts, one line asks whether they want to do anything with the results and the actions follow as chips. Same options, fewer decisions on screen.</p>
+      <p class="gs-reveal"><strong>A quiet audit stamp.</strong> Every query shows who ran it and when. That is a compliance requirement first. I also expect it to nudge people toward more careful queries, since a name and timestamp sit on the output, though that is an intention rather than something I can claim.</p>
+
+      <div class="figure figure--tall gs-reveal">Results view: interpretation chips, unsupported-term notice, and result cards</div>
+      <p class="figure-cap gs-reveal">The interpretation is inspectable before anyone acts on it, and a term the system could not map is stated rather than dropped.</p>
+
+      <h3 class="gs-reveal">What I designed against what shipped first</h3>
+      <p class="gs-reveal">Not every decision made V1. Engineering was clear early about what the first release could carry, so I designed the full pattern and then a leaner V1 that would not undermine it.</p>
+      <p class="gs-reveal">V1 chips are read-only. The interpretation is visible, but a misread query has to be retyped. V2 makes them removable, so clearing Germany re-runs the search without that criterion.</p>
+      <p class="gs-reveal">V1 names the unmappable part of a query without offering a way forward. V2 turns that warning into an action, suggesting the closest available filter as a tappable pill.</p>
+      <p class="gs-reveal">V1 cards show name, ID, and risk. Richer client data was the most common request once people saw the design, and the extended card was already drawn, waiting on the schema work.</p>
+      <p class="gs-reveal">None of this was disagreement. Engineering wanted the same feature and was realistic about the first release, so the compromises were scope calls that V2 could layer onto without a redesign.</p>
+
+      <h3 class="gs-reveal">A shape, not a chat</h3>
+      <p class="gs-reveal">A threaded chat interface was on the table early. I moved away from it because in compliance the artefact is not the conversation, it is the filtered list that gets attached to a report or handed to an auditor. A transcript makes that list harder to export, harder to defend, and harder to reuse.</p>
+      <p class="gs-reveal">The surface stayed structured. The system still communicates, but through chips, states, and results rather than a log.</p>
+
+      <div class="figure gs-reveal">Full feature layout, from the input through to follow-up actions</div>
+      <p class="figure-cap gs-reveal">Conversational where it helps, structured where the work actually happens.</p>
+
+      <h3 class="gs-reveal">Where it is now</h3>
+      <p class="gs-reveal">The feature is live in the compliance workspace. The second release restores the editable chips, the actionable warning, and the extended card.</p>
+      <p class="gs-reveal">We tested the flow during design with people who use the product. It read as easy to follow, and the response was less about whether it worked and more about what it would be able to do next, which is a reasonable signal for a first release. Requests for richer client data were the most frequent, and they are already designed into V2.</p>
+      <p class="gs-reveal">Two questions I could not settle from a Figma file are now in front of real usage: which result-card density holds up in daily work, and whether the audit stamp actually changes how queries get written.</p>
+
+      <h2 class="gs-reveal">Product Universe</h2>
+      <p class="gs-reveal"><strong>Portfolio exploration · Live</strong></p>
+
+      <h3 class="gs-reveal">Analysing portfolios by the products inside them</h3>
+      <p class="gs-reveal">Product Universe is a page for exploring portfolios through the investment products they contain. Rather than opening one portfolio at a time, an advisor can ask which portfolios hold savings plans, which hold none, and which match particular plan characteristics, then work from that list. Before it existed, the platform could only filter on whether a portfolio had a plan at all, and anything more specific meant exporting to a spreadsheet.</p>
+      <p class="gs-reveal">I designed the page and the filtering inside it. The first version covered savings plans, with filters for plan presence, monthly amount, status, frequency, and type.</p>
+
+      <div class="figure gs-reveal">First version: Savings Plans view with the portfolio table</div>
+      <p class="figure-cap gs-reveal">The table carries enough about each portfolio to judge a result without opening it.</p>
+
+      <h3 class="gs-reveal">Why the filtering needed rethinking</h3>
+      <p class="gs-reveal">Product Universe then expanded past savings and withdrawal plans to include combination and overflow plans, and engineering could support richer filtering than had been possible at the start. I suggested we use that room to go further than the original model, agreed the scope with my PM, and checked with the development team that it was buildable.</p>
+      <p class="gs-reveal">The expansion created a problem the first design could not absorb. Plan types do not share properties. Plan status, monthly instalment, and frequency are meaningful for savings and withdrawal plans and not for the others, which will bring attributes of their own. Adding each new field to the existing panel would have produced a long flat list with nothing to indicate which filter belonged to which product.</p>
+
+      <h3 class="gs-reveal">Plan type became the control, not another checkbox</h3>
+      <p class="gs-reveal">I reorganised the panel by scope instead of treating every filter as an equal field. The user first decides whether they are looking at portfolios with plans or without. If with, they choose the plan types, and everything below responds to that choice. Detailed filters are grouped by the plan types they apply to, so plan status, monthly instalment, and frequency appear only when savings or withdrawal plans are in the selection.</p>
+      <p class="gs-reveal">That gave plan type a behavioural role it did not have before, since the selection now determines which criteria are relevant. I designed it as distinct selectable elements with the product icons users already recognise, rather than another checkbox list.</p>
+
+      <div class="figure figure--tall gs-reveal">Redesigned filter panel: plan presence, plan type selection, then plan-specific criteria</div>
+      <p class="figure-cap gs-reveal">The order is the argument. Each step narrows what the next step is allowed to ask.</p>
+
+      <h3 class="gs-reveal">Two money fields at different levels</h3>
+      <p class="gs-reveal">The expanded requirements introduced monthly amount per portfolio alongside monthly instalment per plan. Both are currency ranges and easy to confuse, but they measure different things. I separated them structurally rather than by wording: the portfolio-level amount stays in the general filtering area because it evaluates a total across the portfolio, while the plan-level instalment sits inside the savings and withdrawal group. Position carries the distinction more reliably than two similar labels can.</p>
+
+      <h3 class="gs-reveal">Keeping the results explainable</h3>
+      <p class="gs-reveal">I ended up overlaying the filter panel on the table rather than seating it alongside. The panel opens when the user asks for it and closes once the query is set, which keeps the table at full width for the part of the task that actually needs the space, reading results.</p>
+      <p class="gs-reveal">That makes the closed state a problem to solve. A user is looking at a filtered set with the criteria no longer on screen. So I added a persistent summary of active filters above the results, organised the same way as the panel, showing both which filters are active and which product each one applies to.</p>
+      <p class="gs-reveal">One behaviour I changed before it shipped: an earlier concept left plan filters visible but disabled for portfolios without plans. Disabling signals that something is temporarily unavailable, which is the wrong message for controls that are simply irrelevant, so I removed them from that state instead.</p>
+      <p class="gs-reveal">Detailed combination and overflow filters were out of scope, but I designed them in concept to test whether the structure could take criteria it had never seen. Those filters have since been built on it, and the same pattern is planned for other Product Universe pages.</p>
+
+      <!-- ============================================================
+           TEMPLATE — SECOND PROJECT STORY
+           Copy this block, fill it in, delete the comment markers.
+
+      <h2 class="gs-reveal">[Feature or area name]</h2>
+      <p class="gs-reveal"><strong>[Where it lives in the product] · [Month Year]</strong></p>
+
+      <h3 class="gs-reveal">[What was wrong — write it as a specific observation, not "the problem"]</h3>
+      <p class="gs-reveal">[What existed before and why it stopped working.]</p>
+
+      <h3 class="gs-reveal">[The decision you made and what you traded off]</h3>
+      <p class="gs-reveal">[Your reasoning. This is the part hiring managers read closest.]</p>
+
+      <div class="figure gs-reveal">[Describe the screenshot that goes here]</div>
+      <p class="figure-cap gs-reveal">[Caption: why this visual matters, not what it shows.]</p>
+
+      <h3 class="gs-reveal">[How it got built]</h3>
+      <p class="gs-reveal">[Handoff, developer collaboration, what shipped.]</p>
+
+           END TEMPLATE
+           ============================================================ -->
+
+    </div></section>
+
+    <nav class="next-case" aria-label="Next case study"><div class="container">
+      <a href="finio.html"><span class="label">Back to the start — Case study 01</span><h2>Finio — Critical Documents →</h2></a>
+    </div></nav>
+  </article>
   </main>
 
   <footer class="site-footer"><div class="container footer-grid">
@@ -351,7 +523,8 @@ img { max-width: 100%; display: block; border-radius: 18px; }
     <span><a href="https://www.linkedin.com/in/anntser/">LinkedIn</a> · <a href="https://www.behance.net/anntser">Behance</a> · <a href="https://dribbble.com/tserr">Dribbble</a> · <a href="mailto:anntser1@gmail.com">Email</a></span>
   </div></footer>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script>
 /* Mobile menu behavior */
 document.addEventListener('click', (e) => {
   const toggle = e.target.closest('.menu-toggle');
@@ -461,7 +634,7 @@ document.addEventListener('keydown', (e) => {
           return;
         }
         var subject = 'Wealth Discovery case study password request';
-        var body = 'Please send the Wealth Discovery case study password to: ' + email + '\n\nPassword to share: 1999';
+        var body = 'Hello Ana,\n\nCould you send me the password for the Wealth Discovery case study?\n\nReply to: ' + email + '\n\nThanks!';
         window.location.href = 'mailto:anntser1@gmail.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
         status.textContent = 'Opening your email app...';
       });
