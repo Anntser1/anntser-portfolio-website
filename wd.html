@@ -171,11 +171,101 @@ img { max-width: 100%; display: block; border-radius: 18px; }
 .figure--tall { min-height: 460px; }
 .figure img { width: 100%; height: 100%; object-fit: cover; border-radius: 0; }
 .figure-cap { font-family: var(--font-mono); font-size: .72rem; color: var(--ink-tertiary); text-align: center; margin-top: .8rem; }
+figure.figure { margin: clamp(1.2rem, 3vw, 2rem) 0 0; }
+.figure--wide { max-width: none; }
+.figure--image {
+  min-height: 0;
+  padding: 0;
+  display: block;
+  border-style: solid;
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+.figure--image img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  border-radius: 20px;
+}
+.figure-pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(1rem, 2vw, 1.5rem);
+  align-items: start;
+  max-width: none;
+  margin: clamp(1.4rem, 3vw, 2.2rem) 0 clamp(1.8rem, 4vw, 2.8rem);
+}
+.figure-card {
+  margin: 0;
+  max-width: none;
+}
+.figure-card .figure {
+  margin: 0;
+  min-height: 0;
+}
+.figure-card .figure-cap {
+  text-align: left;
+  margin-bottom: 0;
+}
+.prototype-embed {
+  max-width: none;
+  margin: clamp(1.4rem, 3vw, 2.2rem) 0 0;
+  border: 0;
+  border-radius: 24px;
+  background: transparent;
+  box-shadow: none;
+  overflow: hidden;
+  padding: 0;
+}
+.prototype-embed iframe {
+  width: 100%;
+  height: clamp(780px, 90vw, 1120px);
+  display: block;
+  border: 0;
+  border-radius: 24px;
+  background: transparent;
+}
+@media (max-width: 860px) {
+  .figure-pair { grid-template-columns: 1fr; }
+}
+.media-text {
+  display: grid;
+  grid-template-columns: minmax(280px, .92fr) minmax(0, 1fr);
+  gap: clamp(1.6rem, 4vw, 3rem);
+  align-items: center;
+  max-width: none;
+  margin: clamp(1.4rem, 3vw, 2.2rem) 0 clamp(1.8rem, 4vw, 2.8rem);
+}
+.media-text__visual {
+  border: 1.5px solid var(--line);
+  border-radius: 24px;
+  background: var(--surface-raised);
+  box-shadow: var(--shadow);
+  padding: clamp(.6rem, 1.4vw, .9rem);
+  overflow: hidden;
+}
+.media-text__visual img {
+  width: 100%;
+  height: auto;
+  border-radius: 16px;
+}
+.media-text__body > *:last-child { margin-bottom: 0; }
+.media-text + .figure-cap {
+  max-width: 68ch;
+  text-align: left;
+}
+@media (max-width: 860px) {
+  .media-text { grid-template-columns: 1fr; }
+}
 
 /* Section + prose */
 .section { padding: clamp(2.5rem, 5vw, 4rem) 0; }
 .prose { font-size: 1.1rem; }
 .prose > * { max-width: 70ch; }
+.prose > .media-text,
+.prose > .figure--wide,
+.prose > .figure-pair,
+.prose > .prototype-embed { max-width: none; }
 .prose h2 { font-weight: 750; font-size: clamp(1.5rem, 3vw, 2.3rem); letter-spacing: -.02em; margin: clamp(2.5rem,5vw,3.5rem) 0 1rem; max-width: none; }
 .prose h2:first-child { margin-top: 0; }
 .prose h3 { font-weight: 650; font-size: 1.2rem; margin: 2rem 0 .6rem; }
@@ -379,10 +469,15 @@ img { max-width: 100%; display: block; border-radius: 18px; }
       <p class="gs-reveal"><strong>Portfolio Overview · June 2026</strong></p>
 
       <h3 class="gs-reveal">A map that showed regions and hid countries</h3>
-      <p class="gs-reveal">The original Regional Allocation widget placed large percentage bubbles over broad geographic areas of a world map. A wealth manager could see that a significant share of a portfolio sat somewhere in Europe, but not which countries made up that number.</p>
-      <p class="gs-reveal">The widget communicated regional concentration and hid everything underneath it. My PM asked me to make country-level allocation easier to read without adding levels of drill-down. I owned the UX and UI of the redesign.</p>
-
-      <div class="figure gs-reveal">Before → after: original bubble map beside the redesigned country map</div>
+      <div class="media-text gs-reveal">
+        <figure class="media-text__visual" aria-label="Before and after regional allocation map redesign">
+          <img src="assets/wd-regional-allocation-before-after.png" alt="Original Regional Allocation bubble map beside the redesigned country map" />
+        </figure>
+        <div class="media-text__body">
+          <p>The original Regional Allocation widget placed large percentage bubbles over broad geographic areas of a world map. A wealth manager could see that a significant share of a portfolio sat somewhere in Europe, but not which countries made up that number.</p>
+          <p>The widget communicated regional concentration and hid everything underneath it. My PM asked me to make country-level allocation easier to read without adding levels of drill-down. I owned the UX and UI of the redesign.</p>
+        </div>
+      </div>
       <p class="figure-cap gs-reveal">The original view answered at the level of a continent. The redesign moves the same question down to the level a wealth manager actually works at.</p>
 
       <h3 class="gs-reveal">The obvious fix, and why I passed on it</h3>
@@ -394,7 +489,9 @@ img { max-width: 100%; display: block; border-radius: 18px; }
       <p class="gs-reveal">I replaced the percentage bubbles with a real geographic representation. Countries holding allocation render in the stronger brand purple. Countries without it stay quiet. A table sits permanently beside the map with country names, flags, and exact percentages.</p>
       <p class="gs-reveal">The split is deliberate. The map answers where the portfolio is allocated. The table answers how much. Neither element tries to do both, which is what let me drop the bubbles without losing the precise numbers they carried.</p>
 
-      <div class="figure figure--tall gs-reveal">Redesigned default world view with the allocation table alongside</div>
+      <figure class="figure figure--image figure--wide gs-reveal" aria-label="Redesigned default world view with the allocation table alongside">
+        <img src="assets/wd-redesigned-world-allocation.png" alt="Redesigned default world map with an allocation table alongside" />
+      </figure>
       <p class="figure-cap gs-reveal">Nothing here required a click. The countries and their figures are readable on arrival, which was the point of the change.</p>
 
       <h3 class="gs-reveal">Zoom as optional context</h3>
@@ -402,11 +499,20 @@ img { max-width: 100%; display: block; border-radius: 18px; }
       <p class="gs-reveal">In the zoomed state, the surrounding continent renders in the lighter brand purple to hold geographic context while allocated countries stay darker. Hovering a country brings up a tooltip with its flag and allocation. The table stays in place on the left, and a visible reset returns to the global view.</p>
       <p class="gs-reveal">I kept this shallow on purpose. This is a Portfolio Overview widget, not a mapping application, so there is one optional step down and no deeper path to get lost in.</p>
 
-      <div class="figure gs-reveal">World → Europe zoom transition</div>
-      <p class="figure-cap gs-reveal">The zoom is a continuous movement rather than a page change, so the user never loses their place on the map.</p>
-
-      <div class="figure figure--tall gs-reveal">Zoomed Europe with tooltip and persistent allocation table</div>
-      <p class="figure-cap gs-reveal">Context and detail coexist. The lighter continent keeps the country readable as part of a region instead of isolating it.</p>
+      <div class="figure-pair gs-reveal">
+        <figure class="figure-card">
+          <div class="figure figure--image" aria-label="World to Europe zoom transition">
+            <img src="assets/wd-world-europe-zoom-transition.png" alt="World map zoomed into Europe with allocation table and reset zoom control" />
+          </div>
+          <figcaption class="figure-cap">The zoom is a continuous movement rather than a page change, so the user never loses their place on the map.</figcaption>
+        </figure>
+        <figure class="figure-card">
+          <div class="figure figure--image" aria-label="Zoomed Europe with tooltip and persistent allocation table">
+            <img src="assets/wd-zoomed-europe-tooltip.png" alt="Zoomed Europe allocation map with tooltip and persistent allocation table" />
+          </div>
+          <figcaption class="figure-cap">Context and detail coexist. The lighter continent keeps the country readable as part of a region instead of isolating it.</figcaption>
+        </figure>
+      </div>
 
       <h3 class="gs-reveal">From prototype to build</h3>
       <p class="gs-reveal">The design depended on movement and state changes, so static screens were not going to survive handoff. I built an interactive prototype covering the zoom, the map states, hover behaviour, the colour hierarchy, and reset.</p>
@@ -422,7 +528,9 @@ img { max-width: 100%; display: block; border-radius: 18px; }
       <p class="gs-reveal">Worth being precise about the scope, because it shaped what I built. AI Search covers client search. It is an additional, faster route to a result, not a replacement for filtering. Filters remain the tool for complex structured queries and for everything beyond clients, including portfolios and mandates, and they can express conditions the natural-language layer cannot reach. The goal was a shortcut for the common case, sitting alongside the existing system rather than on top of it.</p>
       <p class="gs-reveal">That sounds simple, and it isn't. In compliance a wrong answer is not an inconvenience, it is a reason for an audit finding. If the system quietly misread a query and returned the wrong client list, the officer would find out when a regulator told them. That risk shaped nearly every decision here.</p>
 
-      <div class="figure gs-reveal">The filter panel, and the same question asked in one line</div>
+      <figure class="figure figure--image figure--wide gs-reveal" aria-label="The filter panel, and the same question asked in one line">
+        <img src="assets/wd-ai-search-filter-panel-question.png" alt="Compliance table with the AI Search panel showing the same filtering question asked in plain language" />
+      </figure>
       <p class="figure-cap gs-reveal">Two routes to the same list. The point was to make the short one available, not to retire the long one.</p>
 
       <h3 class="gs-reveal">Two groups pulling in opposite directions</h3>
@@ -438,7 +546,9 @@ img { max-width: 100%; display: block; border-radius: 18px; }
       <p class="gs-reveal"><strong>One consolidated follow-up.</strong> After results appear, officers usually export, open the full table, or refine. Rather than stacking those as competing prompts, one line asks whether they want to do anything with the results and the actions follow as chips. Same options, fewer decisions on screen.</p>
       <p class="gs-reveal"><strong>A quiet audit stamp.</strong> Every query shows who ran it and when. That is a compliance requirement first. I also expect it to nudge people toward more careful queries, since a name and timestamp sit on the output, though that is an intention rather than something I can claim.</p>
 
-      <div class="figure figure--tall gs-reveal">Results view: interpretation chips, unsupported-term notice, and result cards</div>
+      <figure class="figure figure--image figure--wide gs-reveal" aria-label="Results view: interpretation chips, unsupported-term notice, and result cards">
+        <img src="assets/wd-ai-search-results-view.png" alt="AI Search results view with interpretation chips, unsupported-term notice, and client result cards" />
+      </figure>
       <p class="figure-cap gs-reveal">The interpretation is inspectable before anyone acts on it, and a term the system could not map is stated rather than dropped.</p>
 
       <h3 class="gs-reveal">What I designed against what shipped first</h3>
@@ -452,8 +562,10 @@ img { max-width: 100%; display: block; border-radius: 18px; }
       <p class="gs-reveal">A threaded chat interface was on the table early. I moved away from it because in compliance the artefact is not the conversation, it is the filtered list that gets attached to a report or handed to an auditor. A transcript makes that list harder to export, harder to defend, and harder to reuse.</p>
       <p class="gs-reveal">The surface stayed structured. The system still communicates, but through chips, states, and results rather than a log.</p>
 
-      <div class="figure gs-reveal">Full feature layout, from the input through to follow-up actions</div>
-      <p class="figure-cap gs-reveal">Conversational where it helps, structured where the work actually happens.</p>
+      <div class="prototype-embed gs-reveal" aria-label="Full AI Search prototype, from the input through to follow-up actions">
+        <iframe src="assets/wd-ai-search-prototype/index.html" title="AI Search interactive walkthrough prototype" loading="lazy"></iframe>
+      </div>
+      <p class="figure-cap gs-reveal">Interactive prototype built with Lovable, showing the full AI Search flow from input through follow-up actions.</p>
 
       <h3 class="gs-reveal">Where it is now</h3>
       <p class="gs-reveal">The feature is live in the compliance workspace. The second release restores the editable chips, the actionable warning, and the extended card.</p>
@@ -467,7 +579,9 @@ img { max-width: 100%; display: block; border-radius: 18px; }
       <p class="gs-reveal">Product Universe is a page for exploring portfolios through the investment products they contain. Rather than opening one portfolio at a time, an advisor can ask which portfolios hold savings plans, which hold none, and which match particular plan characteristics, then work from that list. Before it existed, the platform could only filter on whether a portfolio had a plan at all, and anything more specific meant exporting to a spreadsheet.</p>
       <p class="gs-reveal">I designed the page and the filtering inside it. The first version covered savings plans, with filters for plan presence, monthly amount, status, frequency, and type.</p>
 
-      <div class="figure gs-reveal">First version: Savings Plans view with the portfolio table</div>
+      <figure class="figure figure--image figure--wide gs-reveal" aria-label="First version: Savings Plans view with the portfolio table">
+        <img src="assets/wd-product-universe-savings-plans-v1.png" alt="First version of the Savings Plans view with filter panel and portfolio table" />
+      </figure>
       <p class="figure-cap gs-reveal">The table carries enough about each portfolio to judge a result without opening it.</p>
 
       <h3 class="gs-reveal">Why the filtering needed rethinking</h3>
@@ -478,7 +592,9 @@ img { max-width: 100%; display: block; border-radius: 18px; }
       <p class="gs-reveal">I reorganised the panel by scope instead of treating every filter as an equal field. The user first decides whether they are looking at portfolios with plans or without. If with, they choose the plan types, and everything below responds to that choice. Detailed filters are grouped by the plan types they apply to, so plan status, monthly instalment, and frequency appear only when savings or withdrawal plans are in the selection.</p>
       <p class="gs-reveal">That gave plan type a behavioural role it did not have before, since the selection now determines which criteria are relevant. I designed it as distinct selectable elements with the product icons users already recognise, rather than another checkbox list.</p>
 
-      <div class="figure figure--tall gs-reveal">Redesigned filter panel: plan presence, plan type selection, then plan-specific criteria</div>
+      <figure class="figure figure--image figure--wide gs-reveal" aria-label="Redesigned filter panel: plan presence, plan type selection, then plan-specific criteria">
+        <img src="assets/wd-product-universe-redesigned-filter-panel.png" alt="Redesigned Product Universe filter panel with plan presence, plan type selection, and plan-specific criteria over the portfolio table" />
+      </figure>
       <p class="figure-cap gs-reveal">The order is the argument. Each step narrows what the next step is allowed to ask.</p>
 
       <h3 class="gs-reveal">Two money fields at different levels</h3>
