@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Compliance AI Search — Interactive Walkthrough</title>
+<style>
+  :root {
+    --accent: #7c5cfc;
+    --ink: #1b1630;
+    --muted: #6f6a85;
+    /* screenshot native size */
+    --shot-w: 1368;
+    --shot-h: 1249;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; min-height: 100%; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, Helvetica, Arial, sans-serif;
+    background: transparent;
+    min-height: 100%;
+    padding: 0;
+    color: var(--ink);
+  }
+
+  .prototype-shell {
+    width: 100%;
+    min-height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 22px;
+    background:
+      radial-gradient(circle at 50% 28%, rgba(255,255,255,.92) 0 26%, rgba(255,255,255,0) 48%),
+      #f4f0fb;
+    padding: clamp(42px, 7vw, 92px) clamp(18px, 5vw, 70px) clamp(28px, 4vw, 54px);
+  }
+
+  .wrap {
+    width: min(880px, 100%);
+    margin: 0 auto;
+  }
+
+  /* Browser mockup frame */
+  .frame {
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 24px 60px -24px rgba(43, 30, 90, .28), 0 2px 8px rgba(43, 30, 90, .08);
+    overflow: hidden;
+    border: 1px solid #e7e3f2;
+  }
+  .chrome {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background: #faf9fd;
+    border-bottom: 1px solid #eeeaf6;
+  }
+  .dot { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0; }
+  .dot.r { background: #ff5f57; } .dot.y { background: #febc2e; } .dot.g { background: #28c840; }
+  .url {
+    margin-left: 10px;
+    flex: 1;
+    max-width: 380px;
+    background: #f1eef8;
+    border-radius: 999px;
+    font-size: 12px;
+    color: var(--muted);
+    padding: 5px 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Stage: screenshots + cursor */
+  .stage {
+    position: relative;
+    width: 100%;
+    aspect-ratio: var(--shot-w) / var(--shot-h);
+    background: #fff;
+    overflow: hidden;
+    container-type: size;
+  }
+  .shot {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: fill; /* stage ratio == image ratio, so nothing is cropped or letterboxed */
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity .55s ease, transform .55s ease;
+    pointer-events: none;
+  }
+  .shot.active { opacity: 1; transform: translateY(0); }
+
+  /* Typed-text overlay: sits exactly over the search input in the screenshot.
+     Only shown while the "typing" beat of a step runs. Sizes use cqw/cqh so the
+     overlay scales with the stage like the screenshot does. */
+  .typeline {
+    position: absolute;
+    z-index: 4;
+    display: none;
+    align-items: center;
+    background: #ffffff;
+    overflow: hidden;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+  .typeline.on { display: flex; }
+  .typeline .txt {
+    font-size: 1.05cqw;
+    color: #2b2440;
+    letter-spacing: .01em;
+  }
+  .typeline .caret {
+    width: 1.5px;
+    height: 1.25em;
+    margin-left: 1px;
+    background: var(--accent);
+    animation: caretblink .8s steps(1) infinite;
+  }
+  @keyframes caretblink { 50% { opacity: 0; } }
+
+  /* Fake cursor — glides visibly between targets (left/top are transitioned) */
+  .cursor {
+    position: absolute;
+    top: 0; left: 0;
+    width: 22px; height: 22px;
+    z-index: 5;
+    transition:
+      left 1s cubic-bezier(.45, .05, .25, 1),
+      top 1s cubic-bezier(.45, .05, .25, 1),
+      transform .14s ease,
+      opacity .35s ease;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,.35));
+    pointer-events: none;
+    opacity: 0;
+  }
+  .cursor.visible { opacity: 1; }
+  .cursor svg { display: block; width: 100%; height: 100%; }
+  .cursor.pressed { transform: translate(-2px,-2px) scale(.82); }
+
+  .ripple {
+    position: absolute;
+    width: 34px; height: 34px;
+    margin: -17px 0 0 -17px;
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+    background: rgba(124, 92, 252, .18);
+    z-index: 4;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .ripple.go { animation: ripple .55s ease-out forwards; }
+  @keyframes ripple {
+    0% { opacity: 1; transform: scale(.3); }
+    100% { opacity: 0; transform: scale(1.25); }
+  }
+
+  /* Caption + controls */
+  .hud {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px 14px;
+    padding: 16px 4px 0;
+  }
+  .stepno {
+    flex-shrink: 0;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .caption {
+    flex: 1 1 390px;
+    min-width: 220px;
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--ink);
+    min-height: 20px;
+    transition: opacity .3s ease;
+  }
+  .caption.fade { opacity: 0; }
+  .spacer { display: none; }
+  .dots { display: flex; gap: 6px; }
+  .dots i {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: #d9d3ea; transition: background .3s ease, transform .3s ease;
+  }
+  .dots i.on { background: var(--accent); transform: scale(1.25); }
+  .control {
+    border: 1px solid #ddd7ee;
+    background: #fff;
+    color: var(--ink);
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 7px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    transition: border-color .2s ease, color .2s ease;
+  }
+  .control:hover { border-color: var(--accent); color: var(--accent); }
+  .control svg { width: 14px; height: 14px; }
+  .pause { color: var(--accent); border-color: var(--accent); }
+
+  @media (max-width: 640px) {
+    .prototype-shell { padding: 34px 14px 28px; }
+    .wrap { width: 100%; }
+    .url { display: none; }
+    .typeline .txt { font-size: 1.6cqw; }
+    .caption { flex-basis: 100%; order: 2; }
+    .dots { margin-left: auto; }
+  }
+</style>
+</head>
+<body>
+  <main class="prototype-shell" aria-label="AI Search interactive walkthrough">
+    <div class="wrap">
+      <div class="frame">
+        <div class="chrome">
+          <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+          <span class="url">app.wealthdesk.io / compliance</span>
+        </div>
+        <div class="stage" id="stage">
+          <!-- screenshots injected by JS -->
+          <div class="typeline" id="typeline"><span class="txt" id="typetext"></span><span class="caret"></span></div>
+          <div class="ripple" id="ripple"></div>
+          <div class="cursor" id="cursor">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M4 2 L4 18.5 L8.2 14.8 L11 21 L13.4 19.9 L10.7 13.7 L16.5 13.5 Z"
+                    fill="#ffffff" stroke="#1b1630" stroke-width="1.4" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="hud">
+        <span class="stepno" id="stepno">Step 1 / 9</span>
+        <p class="caption" id="caption"></p>
+        <span class="spacer"></span>
+        <div class="dots" id="dots"></div>
+        <button class="control pause" id="pause" type="button" aria-pressed="false">
+          <svg class="pause-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M8 5h3v14H8zM13 5h3v14h-3z"/>
+          </svg>
+          <span>Pause</span>
+        </button>
+        <button class="control replay" id="replay" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/>
+          </svg>
+          Replay
+        </button>
+      </div>
+    </div>
+  </main>
+
+<script>
+(function () {
+  "use strict";
+
+  // x / y are hotspot positions as % of the screenshot.
+  // action: "click" = move + ripple, "hover" = move only, "wait" = stay put,
+  //         "type"  = move into the field, visibly type `typeText`, then click `askAt`.
+  // hold: ms spent on the step AFTER all movement/typing finishes.
+  var STEPS = [
+    { img: "assets/step-1.png", x: 63, y: 3,  action: "click", hold: 1500,
+      caption: "The Compliance workspace — identified transactions. The flow starts at the global search bar." },
+    { img: "assets/step-2.png", x: 40, y: 12.5, action: "click", hold: 1700,
+      caption: "Opening search reveals the new entry point: \u201cAsk in plain language\u201d." },
+    { img: "assets/step-3.png", x: 70, y: 17.6, action: "type", hold: 1500,
+      typeText: "Active clients in Germany with high AML risk",
+      field: { left: 64.1, top: 16.1, width: 29.4, height: 3.1 }, // search input, % of screenshot
+      askAt: { x: 93.9, y: 17.6 },                                 // Ask button
+      caption: "The Compliance AI Search panel opens. The user types a question in plain language and presses Ask." },
+    { img: "assets/step-4.png", x: 74, y: 28, action: "wait",  hold: 2200,
+      caption: "The AI works through the request step by step — understanding intent, building filters, searching records." },
+    { img: "assets/step-5.png", x: 78, y: 66, action: "hover", hold: 1900,
+      caption: "Results appear with the interpreted filters as removable chips — active clients, Germany, high AML risk." },
+    { img: "assets/step-6.png", x: 78, y: 66, action: "hover", hold: 1900,
+      caption: "A long domicile is truncated; hovering reveals the full address in a tooltip." },
+    { img: "assets/step-7.png", x: 88, y: 68, action: "click", hold: 1700,
+      caption: "\u201cExpand for more\u201d opens the full result table — code, domicile, e-mail, phone and AML risk." },
+    { img: "assets/step-8.png", x: 74, y: 28, action: "wait",  hold: 2200,
+      caption: "Starting a new search runs the same transparent reasoning flow again." },
+    { img: "assets/step-9.png", x: 74, y: 40, action: "wait",  hold: 2400,
+      caption: "When nothing matches, the panel says so clearly instead of guessing — and offers to refine the search." }
+  ];
+
+  var CURSOR_MOVE_MS = 1000;   // matches the CSS left/top transition
+  var CHAR_MS = 48;            // typing speed
+
+  var stage     = document.getElementById("stage");
+  var cursor    = document.getElementById("cursor");
+  var ripple    = document.getElementById("ripple");
+  var typeline  = document.getElementById("typeline");
+  var typetext  = document.getElementById("typetext");
+  var caption   = document.getElementById("caption");
+  var stepno    = document.getElementById("stepno");
+  var dotsEl    = document.getElementById("dots");
+  var replay    = document.getElementById("replay");
+  var pauseBtn  = document.getElementById("pause");
+  var pauseText = pauseBtn.querySelector("span");
+
+  // Preload images and build layers + dots
+  var layers = STEPS.map(function (s, i) {
+    var img = document.createElement("img");
+    img.className = "shot";
+    img.src = s.img;
+    img.alt = "Step " + (i + 1);
+    stage.insertBefore(img, typeline);
+    var d = document.createElement("i");
+    dotsEl.appendChild(d);
+    return img;
+  });
+  var dots = Array.prototype.slice.call(dotsEl.children);
+
+  var runId = 0; // increments on replay; stale async actions check it and bail
+  var currentStep = 0;
+  var paused = false;
+  var resumeWaiters = [];
+
+  function setPaused(nextPaused) {
+    paused = nextPaused;
+    pauseBtn.setAttribute("aria-pressed", paused ? "true" : "false");
+    pauseText.textContent = paused ? "Resume" : "Pause";
+    if (!paused) {
+      var waiters = resumeWaiters.slice();
+      resumeWaiters = [];
+      waiters.forEach(function (resolve) { resolve(); });
+    }
+  }
+
+  function waitUntilRunning(id) {
+    if (id !== runId) return Promise.reject(new Error("stale"));
+    if (!paused) return Promise.resolve();
+    return new Promise(function (resolve) { resumeWaiters.push(resolve); }).then(function () {
+      if (id !== runId) throw new Error("stale");
+    });
+  }
+
+  async function sleep(id, ms) {
+    var remaining = ms;
+    var last = performance.now();
+    while (remaining > 0) {
+      await waitUntilRunning(id);
+      var wait = Math.min(remaining, 80);
+      await new Promise(function (resolve) { setTimeout(resolve, wait); });
+      if (id !== runId) throw new Error("stale");
+      if (!paused) {
+        var now = performance.now();
+        remaining -= now - last;
+        last = now;
+      } else {
+        last = performance.now();
+      }
+    }
+  }
+
+  function placeCursor(x, y) {
+    cursor.style.left = x + "%";
+    cursor.style.top = y + "%";
+    cursor.style.transform = "translate(-2px,-2px)";
+  }
+
+  function clickFx(id, x, y) {
+    ripple.style.left = x + "%";
+    ripple.style.top = y + "%";
+    ripple.classList.remove("go");
+    void ripple.offsetWidth;
+    ripple.classList.add("go");
+    cursor.classList.add("pressed");
+    setTimeout(function () { if (id === runId) cursor.classList.remove("pressed"); }, 180);
+  }
+
+  async function typeText(id, text) {
+    typetext.textContent = "";
+    typeline.classList.add("on");
+    for (var i = 0; i < text.length; i++) {
+      if (id !== runId) return;
+      typetext.textContent += text.charAt(i);
+      await sleep(id, CHAR_MS);
+    }
+    await sleep(id, 450);
+  }
+
+  function showStep(i, instant) {
+    var id = runId;
+    var s = STEPS[i];
+    currentStep = i;
+    layers.forEach(function (l, j) { l.classList.toggle("active", j === i); });
+    dots.forEach(function (d, j) { d.classList.toggle("on", j === i); });
+    stepno.textContent = "Step " + (i + 1) + " / " + STEPS.length;
+
+    caption.classList.add("fade");
+    setTimeout(function () {
+      if (id !== runId) return;
+      caption.textContent = s.caption;
+      caption.classList.remove("fade");
+    }, instant ? 0 : 250);
+
+    // hide typing overlay unless this step types
+    typeline.classList.remove("on");
+    if (s.field) {
+      typeline.style.left = s.field.left + "%";
+      typeline.style.top = s.field.top + "%";
+      typeline.style.width = s.field.width + "%";
+      typeline.style.height = s.field.height + "%";
+    }
+
+    cursor.classList.add("visible");
+    if (instant) {
+      cursor.style.transition = "none";
+      placeCursor(s.x, s.y);
+      void cursor.offsetWidth;
+      cursor.style.transition = "";
+    } else {
+      placeCursor(s.x, s.y); // glides from wherever it was — always visible
+    }
+  }
+
+  async function run(startIndex, instant) {
+    var id = ++runId;
+    var i = startIndex || 0;
+    try {
+      while (id === runId) {
+        var s = STEPS[i];
+        showStep(i, instant && i === startIndex);
+
+        if (s.action === "type") {
+          await sleep(id, instant ? 300 : CURSOR_MOVE_MS);
+          await typeText(id, s.typeText);
+          placeCursor(s.askAt.x, s.askAt.y);
+          await sleep(id, CURSOR_MOVE_MS * 0.7);
+          clickFx(id, s.askAt.x, s.askAt.y);
+          await sleep(id, s.hold);
+        } else {
+          await sleep(id, instant ? 400 : CURSOR_MOVE_MS);
+          if (s.action === "click") clickFx(id, s.x, s.y);
+          await sleep(id, s.hold + 400);
+        }
+
+        i = (i + 1) % STEPS.length;
+        instant = false;
+      }
+    } catch (e) {
+      if (e.message !== "stale") throw e;
+    }
+  }
+
+  function restart() {
+    setPaused(false);
+    run(0, true);
+  }
+
+  pauseBtn.addEventListener("click", function () {
+    setPaused(!paused);
+  });
+
+  replay.addEventListener("click", restart);
+
+  dots.forEach(function (dot, i) {
+    dot.setAttribute("role", "button");
+    dot.setAttribute("tabindex", "0");
+    dot.setAttribute("aria-label", "Go to step " + (i + 1));
+    dot.addEventListener("click", function () {
+      setPaused(false);
+      run(i, true);
+    });
+    dot.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        setPaused(false);
+        run(i, true);
+      }
+    });
+  });
+
+  // start once first frame has loaded
+  var first = new Image();
+  first.onload = restart;
+  first.onerror = restart;
+  first.src = STEPS[0].img;
+})();
+</script>
+</body>
+</html>
